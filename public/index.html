@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Downloader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>YouTube Video Downloader</h1>
+    <input type="text" id="url" placeholder="Enter YouTube URL">
+    <button id="download">Download</button>
+    <div id="status"></div>
+    <div id="link"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        document.getElementById('download').addEventListener('click', () => {
+            const url = document.getElementById('url').value;
+            if (url) {
+                document.getElementById('status').innerText = 'Downloading...';
+                socket.emit('downloadVideo', url);
+            }
+        });
+
+        socket.on('downloadComplete', (path) => {
+            document.getElementById('status').innerText = 'Download complete!';
+            document.getElementById('link').innerHTML = `<a href="${path}" download>Download Video</a>`;
+        });
+
+        socket.on('downloadError', (message) => {
+            document.getElementById('status').innerText = message;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "express": "^4.19.2",
+    "node.js": "^0.0.1-security",
+    "npm": "^10.8.1",
+    "socket.io": "^4.7.5",
+    "youtube-dl-exec": "^3.0.2"
+  }
+}
