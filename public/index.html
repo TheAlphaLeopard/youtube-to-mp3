@@ -36,13 +36,20 @@
     <script>
         const socket = io();
 
+        function isValidYouTubeUrl(url) {
+            const regex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be|youtube\.com\/shorts)\/.+$/;
+            return regex.test(url);
+        }
+
         document.getElementById('download').addEventListener('click', () => {
             const url = document.getElementById('url').value;
-            if (url) {
+            if (isValidYouTubeUrl(url)) {
                 document.getElementById('status').innerText = 'Downloading...';
                 document.getElementById('link').innerHTML = '';
                 document.getElementById('videoFrame').style.display = 'none';
                 socket.emit('downloadVideo', url);
+            } else {
+                document.getElementById('status').innerText = 'Invalid YouTube URL. Please enter a valid YouTube link.';
             }
         });
 
@@ -53,7 +60,7 @@
             document.getElementById('videoFrame').src = videoUrl;
             document.getElementById('videoFrame').style.display = 'block';
 
-            document.getElementById('downloadLink').addEventListener('click', (event) => {
+            document.getElementById('downloadLink').addEventListener('click', () => {
                 setTimeout(() => {
                     socket.emit('videoDownloaded', videoPath);
                 }, 5000); // Wait 5 seconds before emitting the deletion event
