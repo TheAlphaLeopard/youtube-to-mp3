@@ -18,12 +18,16 @@
             width: 640px;
             height: 360px;
             margin-top: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
         #progress {
             width: 100%;
             background-color: #f3f3f3;
             border: 1px solid #ccc;
             margin-top: 10px;
+            display: none;
         }
         #progressBar {
             width: 0;
@@ -53,6 +57,7 @@
                 document.getElementById('status').innerText = 'Downloading...';
                 document.getElementById('link').innerHTML = '';
                 document.getElementById('videoFrame').style.display = 'none';
+                document.getElementById('progress').style.display = 'block';
                 document.getElementById('progressBar').style.width = '0%';
                 socket.emit('downloadVideo', url);
             }
@@ -64,6 +69,7 @@
 
         socket.on('downloadComplete', (videoPath) => {
             document.getElementById('status').innerText = 'Download complete!';
+            document.getElementById('progress').style.display = 'none';
             const videoUrl = `/videos/${videoPath}`;
             document.getElementById('link').innerHTML = `<a href="${videoUrl}" download id="downloadLink">Download Video</a>`;
             document.getElementById('videoFrame').src = videoUrl;
@@ -76,6 +82,7 @@
 
         socket.on('downloadError', (message) => {
             document.getElementById('status').innerText = message;
+            document.getElementById('progress').style.display = 'none';
         });
     </script>
 </body>

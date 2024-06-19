@@ -21,14 +21,17 @@ io.on('connection', (socket) => {
     socket.on('downloadVideo', async (url) => {
         try {
             const output = `videos/video-${Date.now()}.mp4`;
-            await youtubedl(url, {
+            videoPath = path.basename(output);
+
+            const result = await youtubedl(url, {
                 output: output,
                 format: 'mp4',
-                progress: true
-            }).on('progress', progress => {
-                socket.emit('downloadProgress', progress.percent);
+                onProgress: (progress) => {
+                    const percent = progress.percent || 0;
+                    socket.emit('downloadProgress', percent.toFixed(2));
+                }
             });
-            videoPath = path.basename(output);
+
             socket.emit('downloadComplete', videoPath);
         } catch (error) {
             console.error(error);
