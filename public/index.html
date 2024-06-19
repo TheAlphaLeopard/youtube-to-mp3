@@ -22,18 +22,6 @@
             margin-left: auto;
             margin-right: auto;
         }
-        #progress {
-            width: 100%;
-            background-color: #f3f3f3;
-            border: 1px solid #ccc;
-            margin-top: 10px;
-            display: none;
-        }
-        #progressBar {
-            width: 0;
-            height: 20px;
-            background-color: #4caf50;
-        }
     </style>
 </head>
 <body>
@@ -41,9 +29,6 @@
     <input type="text" id="url" placeholder="Enter YouTube URL">
     <button id="download">Download</button>
     <div id="status"></div>
-    <div id="progress">
-        <div id="progressBar"></div>
-    </div>
     <div id="link"></div>
     <iframe id="videoFrame" style="display: none;" frameborder="0"></iframe>
 
@@ -57,32 +42,26 @@
                 document.getElementById('status').innerText = 'Downloading...';
                 document.getElementById('link').innerHTML = '';
                 document.getElementById('videoFrame').style.display = 'none';
-                document.getElementById('progress').style.display = 'block';
-                document.getElementById('progressBar').style.width = '0%';
                 socket.emit('downloadVideo', url);
             }
         });
 
-        socket.on('downloadProgress', (percent) => {
-            document.getElementById('progressBar').style.width = percent + '%';
-        });
-
         socket.on('downloadComplete', (videoPath) => {
             document.getElementById('status').innerText = 'Download complete!';
-            document.getElementById('progress').style.display = 'none';
             const videoUrl = `/videos/${videoPath}`;
             document.getElementById('link').innerHTML = `<a href="${videoUrl}" download id="downloadLink">Download Video</a>`;
             document.getElementById('videoFrame').src = videoUrl;
             document.getElementById('videoFrame').style.display = 'block';
 
-            document.getElementById('downloadLink').addEventListener('click', () => {
-                socket.emit('videoDownloaded');
+            document.getElementById('downloadLink').addEventListener('click', (event) => {
+                setTimeout(() => {
+                    socket.emit('videoDownloaded', videoPath);
+                }, 5000); // Wait 5 seconds before emitting the deletion event
             });
         });
 
         socket.on('downloadError', (message) => {
             document.getElementById('status').innerText = message;
-            document.getElementById('progress').style.display = 'none';
         });
     </script>
 </body>

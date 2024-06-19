@@ -16,20 +16,15 @@ app.use('/videos', express.static(path.join(__dirname, 'videos')));
 
 io.on('connection', (socket) => {
     console.log('New client connected');
-    let videoPath = null;
 
     socket.on('downloadVideo', async (url) => {
         try {
             const output = `videos/video-${Date.now()}.mp4`;
-            videoPath = path.basename(output);
+            const videoPath = path.basename(output);
 
             const result = await youtubedl(url, {
                 output: output,
                 format: 'mp4',
-                onProgress: (progress) => {
-                    const percent = progress.percent || 0;
-                    socket.emit('downloadProgress', percent.toFixed(2));
-                }
             });
 
             socket.emit('downloadComplete', videoPath);
@@ -39,24 +34,18 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('videoDownloaded', () => {
-        if (videoPath) {
+    socket.on('videoDownloaded', (videoPath) => {
+        // Schedule deletion of the video file after 1 minute (60000 ms)
+        setTimeout(() => {
             const fullPath = path.join(__dirname, 'videos', videoPath);
             fs.unlink(fullPath, (err) => {
                 if (err) console.error(`Failed to delete ${videoPath}:`, err);
             });
-            videoPath = null;
-        }
+        }, 60000);
     });
 
     socket.on('disconnect', () => {
         console.log('Client disconnected');
-        if (videoPath) {
-            const fullPath = path.join(__dirname, 'videos', videoPath);
-            fs.unlink(fullPath, (err) => {
-                if (err) console.error(`Failed to delete ${videoPath}:`, err);
-            });
-        }
     });
 });
 
