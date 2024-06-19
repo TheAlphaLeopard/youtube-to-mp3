@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Video Downloader</title>
+    <title>Video Downloader</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -25,8 +25,8 @@
     </style>
 </head>
 <body>
-    <h1>YouTube Video Downloader</h1>
-    <input type="text" id="url" placeholder="Enter YouTube URL">
+    <h1>Video Downloader</h1>
+    <input type="text" id="url" placeholder="Enter video URL">
     <button id="download">Download</button>
     <div id="status"></div>
     <div id="link"></div>
@@ -36,20 +36,15 @@
     <script>
         const socket = io();
 
-        function isValidYouTubeUrl(url) {
-            const regex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be|youtube\.com\/shorts)\/.+$/;
-            return regex.test(url);
-        }
-
         document.getElementById('download').addEventListener('click', () => {
             const url = document.getElementById('url').value;
-            if (isValidYouTubeUrl(url)) {
+            if (url) {
                 document.getElementById('status').innerText = 'Downloading...';
                 document.getElementById('link').innerHTML = '';
                 document.getElementById('videoFrame').style.display = 'none';
                 socket.emit('downloadVideo', url);
             } else {
-                document.getElementById('status').innerText = 'Invalid YouTube URL. Please enter a valid YouTube link.';
+                document.getElementById('status').innerText = 'Please enter a valid URL.';
             }
         });
 
