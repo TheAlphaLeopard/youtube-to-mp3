@@ -18,25 +18,25 @@ io.on('connection', (socket) => {
     console.log('New client connected');
 
     socket.on('downloadVideo', async (url) => {
-        // Read the files in the videos folder
-        fs.readdir(path.join(__dirname, 'videos'), (err, files) => {
-            if (err) console.error(`Failed to read videos directory:`, err);
-
-            // If there are more than one file, delete all files
-            if (files.length > 1) {
+        // Synchronously read and delete files in the videos folder
+        try {
+            const files = fs.readdirSync(path.join(__dirname, 'videos'));
+            if (files.length > 0) {
                 for (const file of files) {
-                    fs.unlink(path.join(__dirname, 'videos', file), err => {
-                        if (err) console.error(`Failed to delete ${file}:`, err);
-                    });
+                    fs.unlinkSync(path.join(__dirname, 'videos', file));
                 }
             }
-        });
+        } catch (err) {
+            console.error(`Failed to read or delete files in videos directory:`, err);
+            socket.emit('downloadError', 'Failed to manage videos directory');
+            return;
+        }
 
         try {
-            const output = `videos/video-${Date.now()}.mp4`;
+            const output = path.join(__dirname, 'videos', `video-${Date.now()}.mp4`);
             const videoPath = path.basename(output);
 
-            const result = await youtubedl(url, {
+            await youtubedl(url, {
                 output: output,
                 format: 'mp4',
             });

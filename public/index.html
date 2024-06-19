@@ -54,12 +54,6 @@
             document.getElementById('link').innerHTML = `<a href="${videoUrl}" download id="downloadLink">Download Video</a>`;
             document.getElementById('videoFrame').src = videoUrl;
             document.getElementById('videoFrame').style.display = 'block';
-
-            document.getElementById('downloadLink').addEventListener('click', () => {
-                setTimeout(() => {
-                    socket.emit('videoDownloaded', videoPath);
-                }, 5000); // Wait 5 seconds before emitting the deletion event
-            });
         });
 
         socket.on('downloadError', (message) => {
