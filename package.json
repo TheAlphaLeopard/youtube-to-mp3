@@ -5,5 +5,17 @@
     "npm": "^10.8.1",
     "socket.io": "^4.7.5",
     "youtube-dl-exec": "^3.0.2"
-  }
+  },
+  "name": "youtube-to-mp3",
+  "version": "1.0.0",
+  "description": "youtube video to mp3",
+  "main": "server.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
